@@ -1,0 +1,151 @@
+---
+title: "Problem Set 1: R, R Markdown, Conceptual Foundations of ML"
+author: "Candidate Number: 12889"
+date: |
+  | `r format(Sys.time(), '%d %B %Y')`
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+set.seed(1)
+```
+
+## Part 1: Short Answer Questions
+
+1. Imagine you have been hired as a data consultant. Your client has given you the task of building a classifier for a new dataset they have constructed. In each of the following 5 scenarios, would you recommend a flexible statistical learning method or an inflexible approach? Why? (2-3 sentences per scenario)
+    (a) There is a large sample size of $N=5 \text{ billion}$, a large number of predictors $p=100,000$, and the client is limited in their computing resources. *We would want to use a non flexible method here. The non flexible model requires less computing power, and can performs well with both lots of predictors and large samples*
+    b) Large sample size of $N=5 \text{ billion}$, and (small number of predictors $p=6$. *We would want to use a less flexible model since we have small amount of predictors*
+    (c) Large number of predictors, $p=125,000$, sample size $N=2000$ is relatively small.
+    *A more flexible model should be applied here, to take advantage of more information we have on predictors.*
+    (d) Based on exploratory analysis of the data, it appears that the predictors and the response have a non-linear relationship.*A flexible model since they are better at predicting non linear relationships*
+    e) The error term has very large variance.
+An inflexible model.*The data set appears to have a lot of noise so if it is flexible it will probably be predicting noise and not signal*
+2. How is a **parametric** approach different from a **non-parametric** approach to statistical learning? How does each approach go about estimating $f$? Name three advantages and three disadvantages of each approach. (2-3 sentences per approach)
+A parametric approach assumes linearity in the functional form of the model we are trying to measure while a non-parametric form does not make such assumptions. 
+Advantages of parametric model 
+It can more easily be used of inference. A linear assumption allows for clear understanding of how a predictors effect outcome. 
+Parametric models require less data
+Parametric models are usually less resource intense.
+Disadvantages.  
+Parametric models tend to be worse at predicting outcomes due to linear assumption which rarely holds in real life application 
+Parametric  models usually have more difficulty with categorical variables.  
+
+Non Parametric models
+Advantageous 
+Are likely to be better at predicting because of less restrictive assumptions about the underlying function. 
+Is usually better with extremely large amount of predictors.
+Is sometimes better for categorical variables. Such as knn use for Wikipedia and curse words
+
+3. _ISL 2.4 Exercise 2_
+(a) We would use a regression based approach, because the outcome we are interested in is CEO pay which is a continuous variable. We care more about inference because we want to see how certain variables effect CEO pay and there are a relatively small amount of predictors. The sample size is 500, our predictors are profits, number of employees, and industry. 
+(b) We would use a classifier based approach in this case since we care about a discrete value of success or failure. We are more interested in prediction because we are just trying to estimate if the new product will be a success or failure based on previous products, rather then understand the causes that will make it so. Our sample size in 20, and we have 13 predictors.
+(C) We would us a regression based approach, percentage change is a continuous variable. We care more about prediction because the relationship between stock market and exchange rate is quite volatile and proving causality with our variables would be hard, and many of our predictors are collinear. Our sample size is 52 weeks of exchange rate data, and our predictors are the stock markets in the US, Germany, and the UK. 
+
+
+
+4. _ISL 2.4 Exercise 3_
+
+![The irreducable error does not change with felxibility so it is a straight line. The bias is a Monotonic decreasing function of flexibility. The variance Monotonic increasing function as the flexibility increases. So does training error. Training error can go to zero if we massively overfit, but bias cannot. While test error encapsulates the bias variance trade off, so it is convex at the point where variance is increasesing faster then the bias is decreasing.](graph1.PNG)
+
+
+5. What are the two kinds of "big data" Rocio Titiunik wrote about in her paper on big data? What are some benefits and drawbacks of each kind of big data analysis for social scientific inquiry? Can either kind of big data solve the fundamental problem of causal inference? (5-10 sentences)
+
+There is big data in n and big data in p. Big data in n is where the sample size is extremely large. While large p means a large amount of predictors. 
+The benefits of big n is that it can increase the precision of our models, as well as increase the significance of our hypothesis tests. However large data sets still does not always mean our attempt to prove casual inference will be correct. If our estimator is inconsistent, to start with, adding more data would not fix the issue. The hope with a large number of predictors is that we can capture all the variables of cause and effect, and eliminate items such as omitted variable bias. However the catch with this is that we cannot determine if our model actually captures all casual variables as, well as ignores variables that are effected by the treatment. Large p and large n allow us to have more powerful descriptive analysis and a resource to draw theory from. However research design and theory to back up our models is still needed to prove causal inference.
+## Part 2: Coding Questions
+
+6. In the next problem set, we will use `for` loops and `if`/`else` statements to implement $k$-fold cross-validation. To prepare you for this, we'll practice them using the [fibbonacci sequence](https://en.wikipedia.org/wiki/Fibonacci_number). The fibbonacci sequence is a sequence where each number is the sum of the two preceding ones: $(0,) 1, 1, 2, 3, 5, \dots$. Using `for` loops and `if`/`else` statements, write code that will output the sum of the first 50 terms of the fibbonacci sequence. Include zero as the first term.
+
+```{r}
+vec<-as.numeric(0:50)
+for(i in 0:51){ifelse(vec[i]<2, vec[i]<-vec[i], vec[i]<-vec[i-1]+vec[i-2])}
+sum(vec) 
+```
+
+7. _ISL 2.4 Exercise 10_ (Note: 1. You will need to install the `MASS` library from CRAN. 2. Please break text out of code blocks when explaining or reporting your answers.)
+
+```{r}
+# Code for 10 a) goes here
+library(MASS)
+
+```
+There are 506 rows and 14 columns.
+the rows are tracts for different parts of Boston
+The columns are variables such as average room per #dwelling and property value.
+```{r}
+# Code for 10 b) goes here
+ plot(Boston$medv, Boston$rm)
+plot(Boston$medv, Boston$ptratio)
+```
+There is a strong positive correlation between housing prices and number of dwelling rooms.
+There is also a negative correlation between median housing price and student teacher ratio
+```{r}
+# Code for 10 c) goes here
+ plot(Boston$dis, Boston$crim)
+ plot(Boston$medv, Boston$crim)
+```
+median housing values does have a negative correlation with crime rates. As neighborhoods level of income increases the level of crime will probably decrease because individuals are not  as impoverished
+
+
+```{r}
+# Code for 10 d) goes here
+summary(Boston) 
+
+```
+Shows the range on predictors. Crime is particularly high in some suburbs. The mean crime rate is 3.6 but there is one suburb which the value of 88
+this is not true for tax, where the mean appears to be in the middle
+The same is true with teacher student ratio
+```{r}
+# Code for 10 e) goes here
+bordriv<-Boston$chas
+sum(bordriv)
+
+```
+the answer is 35
+```{r}
+# Code for 10 f) goes here
+summary(Boston)
+
+ 
+```
+19.05
+```{r}
+# Code for 10 g) goes here
+Boston[which(Boston$medv==min(Boston$medv)),]
+
+
+```
+there are two lots that have the lowest median value of owner-occupied homes. These two lots are 399, and 406. These areas have much higher then average crime rates, as well as higher student to teacher ratios. These are indicators that are strongly correlated to low income neighborhoods.
+```{r}
+# Code for 10 h) goes here
+big7=Boston$rm[which(Boston$rm>7)]
+length(big7)
+
+big8=Boston$rm[which(Boston$rm>8)]
+length(big8)
+```
+
+8. Using R Markdown, write some notes on the differences between supervised and unsupervised approaches to statistical learning. Use headers of different sizes, italic and bold text, numbered lists, bullet lists, and hyperlinks. If you would like, use inline
+[LaTeX](https://en.wikipedia.org/wiki/LaTeX) (math notation).
+
+# **Supervised and Unsupervised Learning**
+
+## \textit{Unsurprised  Learning}
+\begin{enumerate}
+\item We are trying to observe characteristics of our data set. 
+\begin{itemize}
+\item We want to observe clustering if our data set is categorical possible method (kmeans)
+\item  We would want to reduce dimensions if our data set is numerical,  data set is numerical Possible method (PCA) 
+\end{itemize}
+\end{enumerate}
+
+## \textit{Supervised Learning}
+\begin{enumerate}
+\item We have a response variable for our data. We are trying to estimate f(x) that maps D to Y 
+\begin{itemize}
+\item regression if the the response variable is continuous example method (OLS)
+\item classier if the response variable is categorical, example method (Knn model)
+\end{itemize}
+\end{enumerate}
+
